@@ -6,16 +6,13 @@
 <title>PPWR Compliance Assessment — ISA Digital Consulting</title>
 
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0}
 body{
   font-family:'Segoe UI',system-ui,sans-serif;
-  background:#F2F6F9;
-  min-height:100vh;
-  font-size:16px;
-  line-height:1.5;
+  background:transparent;
 }
 input,select,button{font-family:inherit}
-#app{min-height:100vh}
+#app{min-height:auto}
 
 /* HEADER */
 .hdr{display:none !important;}
@@ -232,6 +229,28 @@ input,select,button{font-family:inherit}
 }
 </style>
 </head>
+
+<script>
+function sendHeight() {
+  const h = Math.max(
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.offsetHeight
+  );
+  window.parent.postMessage({ type: "ppwr-height", height: h }, "*");
+}
+
+window.addEventListener("load", sendHeight);
+window.addEventListener("resize", sendHeight);
+
+const observer = new MutationObserver(() => sendHeight());
+observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+
+setTimeout(sendHeight, 300);
+setTimeout(sendHeight, 1000);
+</script>
+
 <body>
 <div id="app"></div>
 
