@@ -509,23 +509,54 @@ function generatePDF(){
 }
 
 // ── Render helpers ───────────────────────────────────────────────────────────
-function h(tag,attrs,...children){
-  const el=document.createElement(tag);
-  const safeAttrs=attrs||{};
-  if(tag.toLowerCase()==="button" && !Object.prototype.hasOwnProperty.call(safeAttrs,"type")) el.setAttribute("type","button");
-  Object.entries(safeAttrs).forEach(([k,v])=>{
-    if(k==="style"&&typeof v==="object")Object.assign(el.style,v);
-    else if(k.startsWith("on"))el.addEventListener(k.slice(2).toLowerCase(),v);
-    else if(k==="className")el.className=v;
-    else el.setAttribute(k,v);
+function h(tag, attrs, ...children){
+  const el = document.createElement(tag);
+  const safeAttrs = attrs || {};
+
+  if(tag.toLowerCase() === "button" && !("type" in safeAttrs)){
+    el.type = "button";
+  }
+
+  Object.entries(safeAttrs).forEach(([k, v]) => {
+    if(k === "style" && typeof v === "object"){
+      Object.assign(el.style, v);
+      return;
+    }
+
+    if(k.startsWith("on")){
+      el.addEventListener(k.slice(2).toLowerCase(), v);
+      return;
+    }
+
+    if(k === "className"){
+      el.className = v;
+      return;
+    }
+
+    if(typeof v === "boolean"){
+      if(k in el){
+        el[k] = v;
+      }
+      if(v){
+        el.setAttribute(k, "");
+      } else {
+        el.removeAttribute(k);
+      }
+      return;
+    }
+
+    if(v !== undefined && v !== null){
+      el.setAttribute(k, v);
+    }
   });
-  children.flat(Infinity).forEach(c=>{
-    if(c==null||c===false)return;
-    el.appendChild(typeof c==="string"?document.createTextNode(c):c);
+
+  children.flat(Infinity).forEach(c => {
+    if(c == null || c === false) return;
+    el.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
   });
+
   return el;
 }
-function $div(cls,style,...ch){return h("div",{className:cls,style},...ch);}
 
 // ── RENDER ───────────────────────────────────────────────────────────────────
 function render(){
