@@ -230,26 +230,7 @@ input,select,button{font-family:inherit}
 </style>
 </head>
 
-<script>
-function sendHeight() {
-  const h = Math.max(
-    document.body.scrollHeight,
-    document.documentElement.scrollHeight,
-    document.body.offsetHeight,
-    document.documentElement.offsetHeight
-  );
-  window.parent.postMessage({ type: "ppwr-height", height: h }, "*");
-}
 
-window.addEventListener("load", sendHeight);
-window.addEventListener("resize", sendHeight);
-
-const observer = new MutationObserver(() => sendHeight());
-observer.observe(document.body, { childList: true, subtree: true, attributes: true });
-
-setTimeout(sendHeight, 300);
-setTimeout(sendHeight, 1000);
-</script>
 
 <body>
 <div id="app"></div>
@@ -925,5 +906,41 @@ if(!window.jspdf){
 }
 render();
 </script>
+
+<script>
+function sendHeight() {
+  const body = document.body;
+  const html = document.documentElement;
+  if (!body || !html) return;
+
+  const h = Math.max(
+    body.scrollHeight,
+    html.scrollHeight,
+    body.offsetHeight,
+    html.offsetHeight
+  );
+
+  window.parent.postMessage({ type: "ppwr-height", height: h }, "*");
+}
+
+window.addEventListener("load", () => {
+  sendHeight();
+
+  const observer = new MutationObserver(() => sendHeight());
+  if (document.body) {
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true
+    });
+  }
+
+  setTimeout(sendHeight, 300);
+  setTimeout(sendHeight, 1000);
+});
+
+window.addEventListener("resize", sendHeight);
+</script>
+
 </body>
 </html>
