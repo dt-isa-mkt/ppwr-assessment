@@ -253,7 +253,7 @@ async function sendLead(){
   const secSum=SECTIONS.map(s=>{const r=secScore(s.id,state.answers);return `${s.title}: ${r.score}/${r.max} (${r.pct}%) — ${riskLevel(r.pct).label}`;}).join("\n");
   const gapsText=gaps.length?gaps.map((g,i)=>`${i+1}. [${g.section}] ${g.text} (${g.ref})`).join("\n"):"Nessun gap critico.";
   const f=state.form;
-  const msg=`PPWR ASSESSMENT — ISA Digital Consulting\nReg. (UE) 2025/40\n\nLEAD\nNome: ${f.name}\nAzienda: ${f.company}\nRuolo: ${f.role}\nEmail: ${f.email}\nTelefono: ${f.phone}\nData: ${new Date().toLocaleDateString("it-IT")}\n\nRISULTATI GLOBALI\nPunteggio: ${g.score}/${MAX_SCORE} (${g.pct}%)\nLivello: ${risk.label}\n\nSEZIONI\n${secSum}\n\nGAP CRITICI\n${gapsText}`;
+  const msg=`Nome: ${f.name}\nAzienda: ${f.company}\nRuolo: ${f.role}\nEmail: ${f.email}\nTelefono: ${f.phone}\nData: ${new Date().toLocaleDateString("it-IT")}\n\nRISULTATI GLOBALI\nPunteggio: ${g.score}/${MAX_SCORE} (${g.pct}%)\nLivello: ${risk.label}\n\nSEZIONI\n${secSum}\n\nGAP CRITICI\n${gapsText}`;
   try{
     await fetch("https://api.emailjs.com/api/v1.0/email/send",{
       method:"POST",headers:{"Content-Type":"application/json"},
